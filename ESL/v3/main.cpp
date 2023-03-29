@@ -3,6 +3,8 @@
 #include <string>
 #include "particle_sim.hpp"
 
+sc_core::sc_event ParticleSimulator::explosion;
+
 int sc_main(int argc, char* argv[])
 {
   ParticleSimulator* particles[1000];
@@ -18,7 +20,7 @@ int sc_main(int argc, char* argv[])
     particles[i] = &particle;
   }
 
-  sc_start(2000, sc_core::SC_NS);
+  sc_start(4000, sc_core::SC_NS);
 
   size_t exploded_cnt = 0u;
   for (int i = 0; i < 1000; i++)
