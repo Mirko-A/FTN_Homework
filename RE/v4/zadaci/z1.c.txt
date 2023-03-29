@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <lcd.h>
+#include <sys/fcntl.h>
+#include <wiringPi.h>
+#include <errno.h>
+
+#define LED_PIN (25)
+
+const int RS = 3;
+const int EN = 14;
+const int D0 = 4;
+const int D1 = 12;
+const int D2 = 13;
+const int D3 = 6;
+
+int main(int argc, char *argv[])
+{
+  if (argc < 3)
+  {
+    printf("ERROR: not enough arguments\n");
+    exit(1);
+  }
+
+  if (wiringPiSetup() < 0)  
+  {
+    fprintf(stderr, "ERROR: %s\n", strerror(errno));
+    exit(1);
+  }
+
+  pinMode(LED_PIN, OUTPUT);
+
+  int fd = - 1;
+  int ret;
+
+  char *temp;
+  char tmp2[10];
+  char tmp3[10];
+  char ch = 't';
+
+  char devname_head[50] = "/sys/devices/w1_bus_master1/28-00000";
+  
+  char devname_end[] = "/w1_slave";
+  char devname[100];
+
+  long value;
+  int prev_integer = 0;
+  int prev_decimal = 0;
+  int integer, decimal, limit;
+  char buffer[100];
+  int i, j;
+
+  int lcd_h;
+  lcd_h = lcdInit(2,16,4,RS,EN,D0,D1,D2,D3,D0,D1,D2,D3);
+
+  lcdPosition(lcd_h, 0, 0);
+  //lcdPrintf(lcd_h, "Temp: ");
+
+  strcpy(devname, devname_head);
+  strcat(devname, argv[1]);
+  strcat(devname, devname_end);
+
+  strcpy(tmp3, argv[2]);
+  limit = atoi(tmp3);
+
+  while(1)
+  {
+    if ((fd = open(devname, O_RDONLY)) < 0)
+    {
+       fprintf(stderr, "ERROR: %s\n", strerror(errno));
+       exit(1);
+    }
+
+    ret = read(fd, buffer, sizeof(buffer));
+  
+    if (ret < 0)
+    {
+      close(fd);
+      fprintf(stderr, "ERROR: %s\n", strerror(errno));
+      exit(1);
+    }
+
+    temp = strchr(buffer, ch);
+    sscanf(temp, "t=%s", tmp2);
+    value = atoi(tmp2);
+  
+    integer = value / 1000;
+    decimal = value % 1000;
+  
+    if (integer >= limit)
+    {
+      int led_value = digitalRead(LED_PIN);
+      if (led_value == 0)
+      {
+        digitalWrite(LED_PIN, 1);
+      }
+      else
+      {
+        digitalWrite(LED_PIN, 0);
+      }
+      delay(200);
+    }
+    else
+    {
+      digitalWrite(LED_PIN, 0);
+    }
+    
+    if ((integer != prev_integer) && 
+        (decimal != prev_decimal))
+    {
+      lcdClear(lcd_h);
+      lcdPosition(lcd_h, 0, 0);
+      lcdPrintf(lcd_h, "%s", tmp2);
+      delay(1000);
+    }
+
+    prev_integer = integer;
+    prev_decimal = decimal;
+
+    close(fd);
+  }
+
+  return 0;
+}
+
+
