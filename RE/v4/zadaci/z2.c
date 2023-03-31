@@ -98,9 +98,9 @@ int main()
 					x = (x == MAX_X) ? MIN_X : (y + 1);
 				}
 				break;
-				default
+				default:
 				    /* Do nothing */
-				break
+				break;
 			}
 		}
 		
