@@ -1,12 +1,13 @@
 #include <wiringPi.h>
 //#include <wiringPiI2C.h>
 #include <bcm2835.h> 
+#include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+#include <lcd.h>
 
-
-// adresa PCF8563 na I2C magistrali
+// Adresa PCF8563 na I2C magistrali
 #define DEVICE_ID (0x51)
 
 // Pinovi tastera na RPi
@@ -16,7 +17,7 @@
 #define KEY_UNOS  (24u)
 #define KEY_NOT_PRESSED (0u)
 
-// adrese PCF8563 registara (5, 6, 8 za DAN, MES, GOD)
+// Adrese PCF8563 registara (5, 6, 8 za DAN, MES, GOD)
 #define SEC_ADDR    (0x02)
 #define MIN_ADDR    (0x03)
 #define HR_ADDR     (0x04)
@@ -24,6 +25,27 @@
 #define WEEK_ADDR   (0x06)
 #define MONTH_ADDR  (0x07)
 #define YEAR_ADDR   (0x08)
+
+// Dodela vrednosti za konkretne pinove LCD-a
+#define LCD_RS 3
+#define LCD_E 14
+#define LCD_D4 4
+#define LCD_D5 12
+#define LCD_D6 13
+#define LCD_D7 6
+
+// Dimenzije LCD-a
+#define ROWS     2
+#define COLUMNS  16
+
+// hh:mm:ss + \n -> 8 + 1 = 9 
+#define TIME_STRING_LEN (9u)
+// dd:mm:yy + \n -> 8 + 1 = 9
+#define DATE_STRING_LEN (9u)
+
+#define FALSE (0u)
+#define TRUE  (1u)
+typedef unsigned char boolean
 
 typedef enum
 {
@@ -58,6 +80,9 @@ unsigned char WriteBuf[2] = {0};
 const unsigned int MAX_TIME_VALUES[] = {60, 60, 24, 31, 12, 99};
 
 unsigned char a_clock[13] = {0};
+
+// Lcd handle
+int lcd_h = -1;
 
 int bcdToD(unsigned char byte)
 {
@@ -190,7 +215,7 @@ void readTime(void)
 #endif
 }
 
-void printTime(void)
+void printClock(void)
 {
     printf("Secs: %02X - %3d\n", a_clock[0], bcdToD(a_clock[0] & 0x7F));
     printf("Mins: %02X - %3d\n", a_clock[1], bcdToD(a_clock[1] & 0x7F));
@@ -200,7 +225,52 @@ void printTime(void)
     printf("Year: %02X - %3d\n", a_clock[6], bcdToD(a_clock[6] + 100));
 }
 
-void printTimeSelected(TimeSlot slot)
+void printTimeLcd(int x, int y, boolean clear)
+{
+    unsigned char a_time_string[TIME_STRING_LEN] = {0};
+
+    if (clear == TRUE) lcdClear(lcd_h);
+
+    // Converting time to string TODO: dec or hex?
+    itoa(a_clock[SEC], &a_time_string[0], DECIMAL);
+    a_time_string[2] = ':';
+    itoa(a_clock[MNT], &a_time_string[3], DECIMAL);
+    a_time_string[5] = ':';
+    itoa(a_clock[HOUR], &a_time_string[6], DECIMAL);
+    a_time_string[8] = ':';
+    a_time_string[9] = '\n';
+
+    lcdPosition(lcd_h, x, y);
+    lcdPrintf(lcd_h, "%s", a_time_string);
+}
+
+void printDateLcd(int x, int y, boolean clear)
+{
+    unsigned char a_date_string[DATE_STRING_LEN] = {0};
+
+    if (clear == TRUE) lcdClear(lcd_h);
+
+    // Converting date to string TODO: dec or hex?
+    itoa(a_clock[DAY], &a_date_string[0], DECIMAL);
+    a_date_string[2] = ':';
+    itoa(a_clock[MONTH], &a_date_string[3], DECIMAL);
+    a_date_string[5] = ':';
+    itoa(a_clock[YEAR], &a_date_string[6], DECIMAL);
+    a_date_string[8] = ':';
+    a_date_string[9] = '\n';
+
+    lcdPosition(lcd_h, x, y);
+    lcdPrintf(lcd_h, "%s", a_date_string);
+}
+
+void printClockLcd(void)
+{
+    lcdClear(lcd_h);
+    printTimeLcd(0, 0, FALSE);
+    printDateLcd(0, 1, FALSE);
+}
+
+void printClockSelected(TimeSlot slot)
 {
     if (slot == SEC)
     {
@@ -254,6 +324,54 @@ void printTimeSelected(TimeSlot slot)
     else
     {
         printf("Year: %02X - %3d\n", a_clock[6], bcdToD(a_clock[6] + 100));
+    }
+}
+
+void printClockSelectedLcd(TimeSlot slot)
+{
+    if ((slot == SEC) ||
+        (slot == MNT) ||
+        (slot == HOUR))
+    {
+        printTimeLcd(0, 0, TRUE);
+        
+        switch (slot)
+        {
+            case SEC: lcdPosition(lcd_h, 1, 1);
+            break;
+            case MNT: lcdPosition(lcd_h, 3, 1);
+            break;
+            case HOUR: lcdPosition(lcd_h, 5, 1);
+            break;
+            default:
+            break;
+        }
+
+        lcdPrintf(lcd_h, "^");
+    }
+    else if ((slot == DAY)   ||
+             (slot == MONTH) ||
+             (slot == YEAR))
+    {
+        printDateLcd(0, 0, TRUE);
+        
+        switch (slot)
+        {
+            case DAY: lcdPosition(lcd_h, 1, 1);
+            break;
+            case MONTH: lcdPosition(lcd_h, 3, 1);
+            break;
+            case YEAR: lcdPosition(lcd_h, 5, 1);
+            break;
+            default:
+            break;
+        }
+
+        lcdPrintf(lcd_h, "^");
+    }
+    else
+    {
+        printf("WARNING: Incorrect time slot provided.");
     }
 }
 
@@ -313,6 +431,15 @@ int main(int argc, char **argv)
     
     rtcInit();
 
+    lcd_h = lcdInit(ROWS, COLUMNS, 4, LCD_RS, LCD_E, LCD_D4, LCD_D5, LCD_D6, LCD_D7, 0, 0, 0, 0);
+    if (lcd_h)
+    {
+        printf("ERROR: Failed to init LCD.\n");
+        return -1;
+    }
+    lcdClear(lcd_h);
+	lcdPosition(lcd_h, 0, 0);
+
     while(1)
     {
         if (digitalRead(KEY_UP) == 0)
@@ -345,7 +472,7 @@ int main(int argc, char **argv)
             case DISPLAY:
             {
                 readTime();
-                printTime(); // TODO: Change to LCD
+                printClockLcd(); 
 
                 if (key_pressed == KEY_UNOS && key_pressed != old_key_pressed)
                 {
@@ -357,7 +484,7 @@ int main(int argc, char **argv)
             break;
             case ENTER_TIME:
             {
-                printTimeSelected(time_slot); // TODO: Change to LCD
+                printClockSelectedLcd(time_slot); // TODO: Change to LCD
 
                 if (key_pressed != old_key_pressed)
                 {
@@ -409,8 +536,6 @@ int main(int argc, char **argv)
             default: state = STOP;
             break;
         }
-
-        printf("\n");
     }
 }
 
