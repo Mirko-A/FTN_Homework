@@ -51,7 +51,7 @@ void ParticleSimulator::simulate(void)
       wait(explosion);
       std::cout << "Activated" << std::endl;
       int random_num = (rand() % (100 - 0 + 1)) + 0;
-      if (true)
+      if (random_num == HIT)
       {
         this->m_state = ParticleSimulator::State::Active;
       }
