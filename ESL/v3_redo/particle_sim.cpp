@@ -69,44 +69,37 @@ void Particle::simulate(void)
 Simulator::Simulator(sc_core::sc_module_name name) : sc_module(name)
 {
 	SC_THREAD(run);
-	
-	Particle particle("particle0", Particle::State::Active);
-    particles[0] = &particle;
-
-    for (size_t i = 1; i < 1000; i++)
-    {
-        std::string particle_name = "particle";
-        particle_name.append(std::to_string(i));
-        Particle particle(particle_name.c_str(), Particle::State::Inactive);
-        particles[i] = &particle;
-    }
 }
 
-Simulator::run()
+void Simulator::run(void)
 {
+    while(true)
+    {
+        std::cout << "SIMULATOR" << std::endl; 
 	bool stop_sim = true;
 	wait(15, sc_core::SC_NS);
 	
 	for (int i = 0; i < 1000; i++)
 	{
-		if (this->particles[i]->getState() == Particle::State::Activate) 
+		if (this->particles[i]->getState() == Particle::State::Active) 
 		{
 			stop_sim = false;
 		}
 	}
 	
-	if (stop_sim == true) 
-    {
-	    size_t exploded_cnt = 0u;
-        for (int i = 0; i < 1000; i++)
+	if (true) 
         {
-            if (this->particles[i]->getState() == ParticleSimulator::State::Exploded)
+	    size_t exploded_cnt = 0u;
+            for (int i = 0; i < 1000; i++)
             {
-                exploded_cnt++;
+          	  if (this->particles[i]->getState() == Particle::State::Exploded)
+                  {
+                      exploded_cnt++;
+                  }
             }
-        }
-        std::cout << "NUMBER OF EXPLODED PARTICLES: " << exploded_cnt << std::endl;
+            std::cout << "NUMBER OF EXPLODED PARTICLES: " << exploded_cnt << std::endl;
 		
-		sc_core::sc_stop;
+            sc_core::sc_stop();
 	}
+    }
 }
