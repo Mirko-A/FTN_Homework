@@ -10,6 +10,8 @@
 // Adresa PCF8563 na I2C magistrali
 #define DEVICE_ID (0x51)
 
+#define changeHexToInt(hex) ((((hex)>>4) * 10) + ((hex)%16))
+
 // Pinovi tastera na RPi
 #define KEY_UP    (21u)
 #define KEY_DOWN  (22u)
@@ -43,9 +45,9 @@
 // dd:mm:yy + \n -> 8 + 1 = 9
 #define DATE_STRING_LEN (9u)
 
-#define FALSE (0u)
-#define TRUE  (1u)
-typedef unsigned char boolean
+#define b_FALSE (0u)
+#define b_TRUE  (1u)
+typedef unsigned char boolean;
 
 typedef enum
 {
@@ -68,7 +70,7 @@ typedef enum
 
 TimeSlot time_slot = SEC;
 
-FsmState state = INIT;
+FsmState state = DISPLAY;
 
 // Needed for button pressing
 unsigned char key_pressed = 0;
@@ -127,7 +129,7 @@ void setInitialTime(void)
 
     // Set day of month
     a_clock[DAY] = dToBcd(t.tm_mday);
-    WriteBuf[0] = MONTH_ADDR;
+    WriteBuf[0] = DAY_ADDR;
     WriteBuf[1] = a_clock[DAY];
     bcm2835_i2c_write(WriteBuf, 2);
 
@@ -205,13 +207,13 @@ void readTime(void)
     bcm2835_i2c_write_read_rs(WriteBuf, 1, a_clock, SLOTS_LEN);
 
 // TODO: put back in if needed
-#if 0 
-    a_clock[0] =  a_clock[0] & 0x7F;
-    a_clock[1] =  a_clock[1] & 0x7F;
-    a_clock[2] =  a_clock[2] & 0x3F;
-    a_clock[3] =  a_clock[3] & 0x3F;
-    a_clock[5] = (a_clock[5] & 0x1F) + 1;
-    a_clock[6] =  a_clock[6] + 100;
+#if 1 
+    a_clock[0] =  changeHexToInt(a_clock[0] & 0x7F);
+    a_clock[1] =  changeHexToInt(a_clock[1] & 0x7F);
+    a_clock[2] =  changeHexToInt(a_clock[2] & 0x3F);
+    a_clock[3] =  changeHexToInt(a_clock[3] & 0x3F);
+    a_clock[5] =  changeHexToInt((a_clock[5] & 0x1F));
+    a_clock[6] =  changeHexToInt(a_clock[6]);
 #endif
 }
 
@@ -229,16 +231,10 @@ void printTimeLcd(int x, int y, boolean clear)
 {
     unsigned char a_time_string[TIME_STRING_LEN] = {0};
 
-    if (clear == TRUE) lcdClear(lcd_h);
+    if (clear == b_TRUE) lcdClear(lcd_h);
 
     // Converting time to string TODO: dec or hex?
-    itoa(a_clock[SEC], &a_time_string[0], DECIMAL);
-    a_time_string[2] = ':';
-    itoa(a_clock[MNT], &a_time_string[3], DECIMAL);
-    a_time_string[5] = ':';
-    itoa(a_clock[HOUR], &a_time_string[6], DECIMAL);
-    a_time_string[8] = ':';
-    a_time_string[9] = '\n';
+    sprintf(a_time_string, "%d:%d:%d", a_clock[HOUR], a_clock[MNT], a_clock[SEC]);
 
     lcdPosition(lcd_h, x, y);
     lcdPrintf(lcd_h, "%s", a_time_string);
@@ -248,16 +244,10 @@ void printDateLcd(int x, int y, boolean clear)
 {
     unsigned char a_date_string[DATE_STRING_LEN] = {0};
 
-    if (clear == TRUE) lcdClear(lcd_h);
+    if (clear == b_TRUE) lcdClear(lcd_h);
 
     // Converting date to string TODO: dec or hex?
-    itoa(a_clock[DAY], &a_date_string[0], DECIMAL);
-    a_date_string[2] = ':';
-    itoa(a_clock[MONTH], &a_date_string[3], DECIMAL);
-    a_date_string[5] = ':';
-    itoa(a_clock[YEAR], &a_date_string[6], DECIMAL);
-    a_date_string[8] = ':';
-    a_date_string[9] = '\n';
+    sprintf(a_date_string, "%d:%d:%d", a_clock[DAY], a_clock[MONTH], a_clock[YEAR]);
 
     lcdPosition(lcd_h, x, y);
     lcdPrintf(lcd_h, "%s", a_date_string);
@@ -266,8 +256,8 @@ void printDateLcd(int x, int y, boolean clear)
 void printClockLcd(void)
 {
     lcdClear(lcd_h);
-    printTimeLcd(0, 0, FALSE);
-    printDateLcd(0, 1, FALSE);
+    printTimeLcd(0, 0, b_FALSE);
+    printDateLcd(0, 1, b_FALSE);
 }
 
 void printClockSelected(TimeSlot slot)
@@ -333,7 +323,7 @@ void printClockSelectedLcd(TimeSlot slot)
         (slot == MNT) ||
         (slot == HOUR))
     {
-        printTimeLcd(0, 0, TRUE);
+        printTimeLcd(0, 0, b_TRUE);
         
         switch (slot)
         {
@@ -353,7 +343,7 @@ void printClockSelectedLcd(TimeSlot slot)
              (slot == MONTH) ||
              (slot == YEAR))
     {
-        printDateLcd(0, 0, TRUE);
+        printDateLcd(0, 0, b_TRUE);
         
         switch (slot)
         {
@@ -403,7 +393,7 @@ void updateTime(unsigned char key)
 
 int main(int argc, char **argv)
 {
-#if 0
+#if 1
     if (wiringPiSetup()  < 0)
     {
         printf("ERROR: Failed to init wiringPi.\n");
@@ -444,22 +434,22 @@ int main(int argc, char **argv)
     {
         if (digitalRead(KEY_UP) == 0)
         {
-            key_pressed = KEY_UP;
+            //key_pressed = KEY_UP;
             //printf("21");
         }
         else if (digitalRead(KEY_DOWN) == 0)
         {
-            key_pressed = KEY_DOWN;
+            key_pressed = KEY_UNOS; // TODO: changes for testing
             //printf("22");
         }
         else if (digitalRead(KEY_UNOS) == 0)
         {
-            key_pressed = KEY_UNOS;
+            //key_pressed = KEY_UNOS;
             //printf("23");
         }
         else if (digitalRead(KEY_OK) == 0)
         {
-            key_pressed = KEY_OK;
+            //key_pressed = KEY_OK;
             //printf("24");
         }
         else
@@ -479,12 +469,12 @@ int main(int argc, char **argv)
                     state = ENTER_TIME;
                 }
 
-                bcm2835_delay(200);
+                bcm2835_delay(1000); // TODO: Lower when LCD is used
             }
             break;
             case ENTER_TIME:
             {
-                printClockSelectedLcd(time_slot);
+                printClockSelectedLcd(time_slot); // TODO: Change to LCD
 
                 if (key_pressed != old_key_pressed)
                 {
@@ -522,7 +512,7 @@ int main(int argc, char **argv)
                     }
                 }
 
-                bcm2835_delay(200);
+                bcm2835_delay(2000); // TODO: Lower when LCD is used
             }
             break;
             case STOP:
@@ -530,7 +520,6 @@ int main(int argc, char **argv)
                 
                 bcm2835_i2c_end();
                 bcm2835_close();
-
                 return 0;
             }
             break;

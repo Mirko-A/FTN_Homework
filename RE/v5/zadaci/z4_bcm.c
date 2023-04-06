@@ -46,7 +46,7 @@ typedef enum
 
 TimeSlot time_slot = SEC;
 
-FsmState state = INIT;
+FsmState state = DISPLAY;
 
 // Needed for button pressing
 unsigned char key_pressed = 0;
@@ -154,7 +154,7 @@ void setCustomTime(void)
     bcm2835_i2c_write(WriteBuf, 2);
 
     // Set day of month
-    WriteBuf[0] = MONTH_ADDR;
+    WriteBuf[0] = DAY_ADDR;
     WriteBuf[1] = a_clock[DAY];
     bcm2835_i2c_write(WriteBuf, 2);
 

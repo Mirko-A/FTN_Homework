@@ -28,7 +28,7 @@ int main(int argc, char **argv)
         bcm2835_i2c_write_read_rs(&WriteBuf, 1, &ReadBuf2, 1);
         bcm2835_i2c_read(&ReadBuf2, 1);
 		
-        WriteBuf = 0x03;
+        WriteBuf = 0x03;cd ..
         bcm2835_i2c_write_read_rs(&WriteBuf, 1, &ReadBuf3, 1);
         bcm2835_i2c_read(&ReadBuf3, 1);
 		
