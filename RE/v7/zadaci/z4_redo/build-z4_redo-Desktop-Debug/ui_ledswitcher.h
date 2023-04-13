@@ -24,8 +24,8 @@ class Ui_LedSwitcher
 {
 public:
     QWidget *centralwidget;
-    QLabel *SwitchLabel;
     QPushButton *pushButton;
+    QLabel *label;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -36,17 +36,14 @@ public:
         LedSwitcher->resize(800, 600);
         centralwidget = new QWidget(LedSwitcher);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        SwitchLabel = new QLabel(centralwidget);
-        SwitchLabel->setObjectName(QString::fromUtf8("SwitchLabel"));
-        SwitchLabel->setGeometry(QRect(150, 100, 511, 191));
-        QFont font;
-        font.setPointSize(20);
-        SwitchLabel->setFont(font);
-        SwitchLabel->setPixmap(QPixmap(QString::fromUtf8(":/switch_off.png")));
         pushButton = new QPushButton(centralwidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(340, 310, 117, 36));
+        pushButton->setGeometry(QRect(340, 320, 117, 36));
         pushButton->setCheckable(true);
+        label = new QLabel(centralwidget);
+        label->setObjectName(QString::fromUtf8("label"));
+        label->setGeometry(QRect(160, 90, 487, 184));
+        label->setPixmap(QPixmap(QString::fromUtf8(":/imgs/switch_off.png")));
         LedSwitcher->setCentralWidget(centralwidget);
         menubar = new QMenuBar(LedSwitcher);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -64,8 +61,8 @@ public:
     void retranslateUi(QMainWindow *LedSwitcher)
     {
         LedSwitcher->setWindowTitle(QCoreApplication::translate("LedSwitcher", "LedSwitcher", nullptr));
-        SwitchLabel->setText(QString());
         pushButton->setText(QCoreApplication::translate("LedSwitcher", "Toggle", nullptr));
+        label->setText(QString());
     } // retranslateUi
 
 };

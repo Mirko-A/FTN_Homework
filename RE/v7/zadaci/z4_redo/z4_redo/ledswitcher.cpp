@@ -13,14 +13,15 @@ LedSwitcher::~LedSwitcher()
     delete ui;
 }
 
+
 void LedSwitcher::on_pushButton_clicked(bool checked)
 {
     if (checked == true)
     {
-        ui->SwitchLabel->setPixmap(QPixmap(":/switch_imgs/switch_on.png"));
+        ui->label->setPixmap(QPixmap(":/imgs/switch_on.png"));
     }
     else
     {
-        ui->SwitchLabel->setPixmap(QPixmap(":/switch_imgs/switch_off.png"));
+        ui->label->setPixmap(QPixmap(":/imgs/switch_off.png"));
     }
 }

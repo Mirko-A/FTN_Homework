@@ -14,32 +14,11 @@
    <string>LedSwitcher</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="SwitchLabel">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>100</y>
-      <width>511</width>
-      <height>191</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>20</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap resource="resources.qrc">:/switch_off.png</pixmap>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>310</y>
+      <y>320</y>
       <width>117</width>
       <height>36</height>
      </rect>
@@ -49,6 +28,22 @@
     </property>
     <property name="checkable">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>90</y>
+      <width>487</width>
+      <height>184</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="resources.qrc">:/imgs/switch_off.png</pixmap>
     </property>
    </widget>
   </widget>

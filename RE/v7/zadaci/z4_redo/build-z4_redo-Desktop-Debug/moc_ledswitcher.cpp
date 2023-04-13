@@ -7,7 +7,7 @@
 *****************************************************************************/
 
 #include <memory>
-#include "../z4/ledswitcher.h"
+#include "../z4_redo/ledswitcher.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
@@ -49,7 +49,7 @@ static const uint qt_meta_data_LedSwitcher[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       1,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -57,11 +57,9 @@ static const uint qt_meta_data_LedSwitcher[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   24,    2, 0x08 /* Private */,
-       1,    1,   25,    2, 0x08 /* Private */,
+       1,    1,   19,    2, 0x08 /* Private */,
 
  // slots: parameters
-    QMetaType::Void,
     QMetaType::Void, QMetaType::Bool,    3,
 
        0        // eod
@@ -73,8 +71,7 @@ void LedSwitcher::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         auto *_t = static_cast<LedSwitcher *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->on_pushButton_clicked(); break;
-        case 1: _t->on_pushButton_clicked((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 0: _t->on_pushButton_clicked((*reinterpret_cast< bool(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -109,13 +106,13 @@ int LedSwitcher::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 1)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 1;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 2)
+        if (_id < 1)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 2;
+        _id -= 1;
     }
     return _id;
 }
