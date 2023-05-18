@@ -1,6 +1,6 @@
 QT       += core gui
-LIBS     += -L/usr/local/lib -lwiringPi
-LIBS     += -L/usr/local/lib -lwiringPiDev
+#LIBS     += -L/usr/local/lib -lwiringPi
+#LIBS     += -L/usr/local/lib -lwiringPiDev
 LIBS     += -L/usr/local/lib -lbcm2835
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

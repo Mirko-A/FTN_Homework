@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,7 +22,7 @@ typedef enum
 
 extern void setCustomTime(void);
 extern void readTime(void);
-extern unsigned char a_clock[];
+extern char a_clock[];
 
 class MainWindow : public QMainWindow
 {
@@ -31,8 +32,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_Taster_clicked();
     void updateTime(void);
+
 private:
     Ui::MainWindow *ui;
+    QTimer* sec_ticker;
 };
 #endif // MAINWINDOW_H

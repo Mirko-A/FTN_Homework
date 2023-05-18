@@ -2,7 +2,7 @@
 
 #include <QApplication>
 
-#include <wiringPi.h>
+//#include <wiringPi.h>
 #include <bcm2835.h>
 #include <stdio.h>
 #include <time.h>
@@ -20,9 +20,9 @@
 #define MONTH_ADDR  (0x07)
 #define YEAR_ADDR   (0x08)
 
-unsigned char WriteBuf[2] = {0};
+char WriteBuf[2] = {0};
 
-unsigned char a_clock[13] = {0};
+char a_clock[13] = {0};
 
 int bcdToD(unsigned char byte)
 {
@@ -142,8 +142,9 @@ void setCustomTime(void)
 void readTime(void)
 {
     WriteBuf[0] = SEC_ADDR;
-    bcm2835_i2c_write_read_rs((char *)WriteBuf, 1, (char *)a_clock, SLOTS_LEN);
+    bcm2835_i2c_write_read_rs(WriteBuf, 1, a_clock, SLOTS_LEN);
 
+    printf("\n\n\nAAAAAAAAAAA\n\n\n");
 // TODO: put back in if needed
 #if 0
     a_clock[0] =  a_clock[0] & 0x7F;
@@ -157,9 +158,6 @@ void readTime(void)
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-
     printf("Initializing I2C protocol...\n");
     if (!bcm2835_init())
     {
@@ -174,6 +172,9 @@ int main(int argc, char *argv[])
     bcm2835_i2c_set_baudrate(10000);
 
     rtcInit();
+
+    QApplication a(argc, argv);
+    MainWindow w;
 
     w.show();
 
