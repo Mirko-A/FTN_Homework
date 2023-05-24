@@ -2,8 +2,8 @@
 
 #include <QApplication>
 
-//#include <wiringPi.h>
-#include <bcm2835.h>
+#include <wiringPi.h>
+#include <wiringPiI2C.h>
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
@@ -20,9 +20,9 @@
 #define MONTH_ADDR  (0x07)
 #define YEAR_ADDR   (0x08)
 
-char WriteBuf[2] = {0};
+char a_clock[7] = {0};
 
-char a_clock[13] = {0};
+int rtc_i2c_fd;
 
 int bcdToD(unsigned char byte)
 {
@@ -37,149 +37,100 @@ unsigned int dToBcd(unsigned int byte)
     return ((byte / 10) << 4) + (byte % 10);
 }
 
-void setInitialTime(void)
+void SetTime(int i2c_fd)
+{
+	// TODO: If it doesn't work try 0x20
+    wiringPiI2CWriteReg8(i2c_fd, 0, 0x20); // Stop the clock
+#if 1
+	wiringPiI2CWriteReg8(i2c_fd, SEC_ADDR, a_clock[SEC]);
+	wiringPiI2CWriteReg8(i2c_fd, MIN_ADDR, a_clock[MNT]);
+	wiringPiI2CWriteReg8(i2c_fd, HR_ADDR, a_clock[HOUR]);
+	wiringPiI2CWriteReg8(i2c_fd, DAY_ADDR, a_clock[DAY]);
+	wiringPiI2CWriteReg8(i2c_fd, MONTH_ADDR, a_clock[MONTH]);
+	wiringPiI2CWriteReg8(i2c_fd, YEAR_ADDR, a_clock[YEAR]);
+#else
+	// Start writing from register 0:
+    wiringPiI2CWrite(i2c_fd, 2);
+    // Write 7 bytes
+    write(i2c_fd, a_clock, 7);
+#endif
+    wiringPiI2CWriteReg8(i2c_fd, 0, 0x00);  // Start the clock
+}
+
+void InitializeClock(int i2c_fd)
 {
     struct tm t;
     time_t now;
 
-    printf("Inititalizing the clock...\n");
+    printf("Setting the clock...\n");
 
     now = time(NULL);
     gmtime_r(&now, &t);
 
-    // Set seconds
-    a_clock[SEC] = dToBcd(t.tm_sec);
-    WriteBuf[0] = SEC_ADDR;
-    WriteBuf[1] = a_clock[SEC];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-
-    // Set minutes
-    a_clock[MNT] = dToBcd(t.tm_min);
-    WriteBuf[0] = MIN_ADDR;
-    WriteBuf[1] = a_clock[MNT];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-
-    // Set hours
-    a_clock[HOUR] = dToBcd(t.tm_hour);
-    WriteBuf[0] = HR_ADDR;
-    WriteBuf[1] = a_clock[HOUR];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-
-    // Set day of month
-    a_clock[DAY] = dToBcd(t.tm_mday);
-    WriteBuf[0] = MONTH_ADDR;
-    WriteBuf[1] = a_clock[DAY];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-
-    // Set day of week
-    a_clock[WEEK] = dToBcd(t.tm_wday);
-    WriteBuf[0] = WEEK_ADDR;
-    WriteBuf[1] = a_clock[WEEK];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-
-    // Set month
+    a_clock[SEC]   = dToBcd(t.tm_sec);
+    a_clock[MNT]   = dToBcd(t.tm_min);
+    a_clock[HOUR]  = dToBcd(t.tm_hour);
+    a_clock[DAY]   = dToBcd(t.tm_mday);
+    a_clock[WEEK]  = dToBcd(t.tm_wday);
     a_clock[MONTH] = dToBcd(t.tm_mon + 1);
-    WriteBuf[0] = MONTH_ADDR;
-    WriteBuf[1] = a_clock[MONTH];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
+    a_clock[YEAR]  = dToBcd(t.tm_year - 100);
 
-    // Set year
-    a_clock[YEAR] = dToBcd(t.tm_year - 100);
-    WriteBuf[0] = YEAR_ADDR;
-    WriteBuf[1] = a_clock[YEAR];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
+	SetTime(i2c_fd);
 }
 
-void rtcInit(void)
+void readTime(int i2c_fd)
 {
-    setInitialTime();
+#if 1
+	a_clock[SEC]   = wiringPiI2CReadReg8(i2c_fd, SEC_ADDR);
+	a_clock[MNT]   = wiringPiI2CReadReg8(i2c_fd, MIN_ADDR);
+	a_clock[HOUR]  = wiringPiI2CReadReg8(i2c_fd, HR_ADDR);
+	a_clock[DAY]   = wiringPiI2CReadReg8(i2c_fd, DAY_ADDR);
+	a_clock[MONTH] = wiringPiI2CReadReg8(i2c_fd, MONTH_ADDR);
+	a_clock[YEAR]  = wiringPiI2CReadReg8(i2c_fd, YEAR_ADDR);
+#else
+    // Start reading form register 0:
+    wiringPiI2CWrite(i2c_fd, 2);
+	
+    // Read in 7 bytes
+    int bytes_read = read(i2c_fd, a_clock, 7);
 
-    // Inicijalizacija RTC-a (start clock)
-    WriteBuf[0] = 0x00;
-    WriteBuf[1] = 0x00;
-
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-}
-
-void setCustomTime(void)
-{
-    // Set seconds
-    WriteBuf[0] = SEC_ADDR;
-    WriteBuf[1] = a_clock[SEC];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-
-    // Set minutes
-    WriteBuf[0] = MIN_ADDR;
-    WriteBuf[1] = a_clock[MNT];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-
-    // Set hours
-    WriteBuf[0] = HR_ADDR;
-    WriteBuf[1] = a_clock[HOUR];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-
-    // Set day of month
-    WriteBuf[0] = DAY_ADDR;
-    WriteBuf[1] = a_clock[DAY];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-
-    // Set day of week
-    WriteBuf[0] = WEEK_ADDR;
-    WriteBuf[1] = a_clock[WEEK];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-
-    // Set month
-    WriteBuf[0] = MONTH_ADDR;
-    WriteBuf[1] = a_clock[MONTH];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-
-    // Set year
-    WriteBuf[0] = YEAR_ADDR;
-    WriteBuf[1] = a_clock[YEAR];
-    bcm2835_i2c_write((const char *)WriteBuf, 2);
-}
-
-void readTime(void)
-{
-    WriteBuf[0] = SEC_ADDR;
-    bcm2835_i2c_write_read_rs(WriteBuf, 1, a_clock, SLOTS_LEN);
-
-    printf("\n\n\nAAAAAAAAAAA\n\n\n");
-// TODO: put back in if needed
-#if 0
-    a_clock[0] =  a_clock[0] & 0x7F;
-    a_clock[1] =  a_clock[1] & 0x7F;
-    a_clock[2] =  a_clock[2] & 0x3F;
-    a_clock[3] =  a_clock[3] & 0x3F;
-    a_clock[5] = (a_clock[5] & 0x1F) + 1;
-    a_clock[6] =  a_clock[6] + 100;
+    if (bytes_read != 7)
+    {
+        printf("read got: %d\n", bytes_read);
+    }
+    else
+    {
+        printf("Read 7 bytes");
+    }
 #endif
 }
 
 int main(int argc, char *argv[])
 {
+    if (wiringPiSetup()  < 0)
+    {
+        printf("ERROR: Failed to init wiringPi.\n");
+        return -1;
+    }
+	
     printf("Initializing I2C protocol...\n");
-    if (!bcm2835_init())
+	rtc_i2c_fd = wiringPiI2CSetup(DEVICE_ID);
+    if (rtc_i2c_fd < 0)
     {
         printf("ERROR: Failed to init I2C communication.\n");
         return -1;
     }
-
-    printf("Starting I2C communication...\n");
-    bcm2835_i2c_begin();
-
-    bcm2835_i2c_setSlaveAddress(DEVICE_ID);
-    bcm2835_i2c_set_baudrate(10000);
-
-    rtcInit();
+	
+    setTime(rtc_i2c_fd);
+	
+	// Start the clock
+    wiringPiI2CWriteReg8(rtc_i2c_fd, 0, 0x00);
+    //wiringPiI2CWriteReg8(rtc_i2c_fd, 1, 0x00); TODO: bring back if needed
 
     QApplication a(argc, argv);
     MainWindow w;
 
     w.show();
-
-    bcm2835_i2c_end();
-    bcm2835_close();
 
     return a.exec();
 }

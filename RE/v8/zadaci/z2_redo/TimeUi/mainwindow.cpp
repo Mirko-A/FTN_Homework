@@ -29,7 +29,7 @@ void MainWindow::on_Taster_clicked()
 
 void MainWindow::updateTime(void)
 {
-    readTime();
+    readTime(rtc_i2c_fd);
     QTime time(a_clock[HOUR], a_clock[MNT], a_clock[SEC], 0);
     QString time_str = time.toString(format);
     ui->Ispis->setText(time_str);
