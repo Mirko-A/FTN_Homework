@@ -3,7 +3,10 @@
 #include <QTime>
 #include <QMessageBox>
 
+#include "lcd.h"
+
 extern int rtc_i2c_fd;
+extern int lcd_h;
 extern char a_clock[];
 extern void SetTime(int i2c_fd);
 extern void readTime(int i2c_fd);
@@ -54,4 +57,14 @@ void MainWindow::updateTime(void)
     QTime time(bcdToD(a_clock[HOUR]), bcdToD(a_clock[MNT]), bcdToD(a_clock[SEC]), 0);
     QString time_str = time.toString(format);
     ui->Ispis->setText(time_str);
+
+//    int y = 0;
+//    if (ui->InvertRow)
+//    {
+//        y = (y == 0) ? 1 : 0;
+//    }
+
+    lcdClear(lcd_h);
+    lcdPosition(lcd_h, 0, 0);
+    lcdPrintf(lcd_h, time_str.toLocal8Bit().data());
 }

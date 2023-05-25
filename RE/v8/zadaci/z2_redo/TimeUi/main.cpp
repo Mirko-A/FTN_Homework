@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+#include <lcd.h>
 
 // adresa PCF8563 na I2C magistrali
 #define DEVICE_ID (0x51)
@@ -20,8 +21,18 @@
 #define MONTH_ADDR  (0x07)
 #define YEAR_ADDR   (0x08)
 
+// dodela vrednosti za konkretne pinove
+// prema gornjoj tabeli i semi DVK512
+const int RS = 3;
+const int EN = 14;
+const int D0 = 4;
+const int D1 = 12;
+const int D2 = 13;
+const int D3 = 6;
+
 char a_clock[7] = {0};
 
+int lcd_h;
 int rtc_i2c_fd;
 
 int bcdToD(unsigned char byte)
@@ -105,6 +116,8 @@ void readTime(int i2c_fd)
 #endif
 }
 
+
+
 int main(int argc, char *argv[])
 {
     if (wiringPiSetup()  < 0)
@@ -126,6 +139,8 @@ int main(int argc, char *argv[])
 	// Start the clock
     wiringPiI2CWriteReg8(rtc_i2c_fd, 0, 0x00);
     //wiringPiI2CWriteReg8(rtc_i2c_fd, 1, 0x00); TODO: bring back if needed
+
+    lcd_h = lcdInit(2, 16, 4, RS, EN, D0, D1, D2, D3, D0, D1, D2, D3);
 
     QApplication a(argc, argv);
     MainWindow w;
