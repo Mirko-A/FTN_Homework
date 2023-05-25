@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QTime>
 #include <QMessageBox>
 
 #include "lcd.h"
@@ -35,7 +34,6 @@ MainWindow::~MainWindow()
     delete sec_ticker;
 }
 
-
 void MainWindow::on_Taster_clicked()
 {
     QTime NewTime = QTime::fromString(ui->Unos->text());
@@ -53,11 +51,50 @@ void MainWindow::on_Taster_clicked()
     }
 }
 
+void MainWindow::on_TasterAlarm_clicked()
+{
+    m_AlarmTime = new QTime(QTime::fromString(ui->UnosAlarm->text()));
+    if (m_AlarmTime->isValid() == false)
+    {
+        QMessageBox::information(this, "Clock app", "Uneli ste pogresan format!");
+        delete m_AlarmTime;
+    }
+}
+
 void MainWindow::updateTime(void)
 {
+    QString time_str;
     readTime(rtc_i2c_fd);
-    QTime time(bcdToD(a_clock[HOUR]), bcdToD(a_clock[MNT]), bcdToD(a_clock[SEC]), 0);
-    QString time_str = time.toString(format);
+    int Hours = bcdToD(a_clock[HOUR]);
+
+    if (ui->Format12->isChecked())
+    {
+        if (Hours > 12)
+        {
+            QTime time(Hours - 12, bcdToD(a_clock[MNT]), bcdToD(a_clock[SEC]), 0);
+            time_str = time.toString(format) + " PM";
+        }
+        else
+        {
+            QTime time(Hours, bcdToD(a_clock[MNT]), bcdToD(a_clock[SEC]), 0);
+            time_str = time.toString(format) + " AM";
+        }
+    }
+    else
+    {
+        QTime time(Hours, bcdToD(a_clock[MNT]), bcdToD(a_clock[SEC]), 0);
+        time_str = time.toString(format);
+    }
+
+    if (m_AlarmTime != nullptr)
+    {
+        if (m_AlarmTime->toString() == time_str)
+        {
+            QMessageBox::information(this, "Clock app", "Alarm!!!");
+            delete m_AlarmTime;
+        }
+    }
+
     ui->Ispis->setText(time_str);
 
     lcdClear(lcd_h);

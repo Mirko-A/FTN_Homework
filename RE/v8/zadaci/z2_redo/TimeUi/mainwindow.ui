@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>437</width>
-    <height>530</height>
+    <width>656</width>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="Taster">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>90</y>
+      <x>180</x>
+      <y>210</y>
       <width>121</width>
       <height>36</height>
      </rect>
@@ -27,11 +27,11 @@
      <string>Potvrdi</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="Vreme">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>40</y>
+      <x>10</x>
+      <y>160</y>
       <width>141</width>
       <height>28</height>
      </rect>
@@ -40,24 +40,11 @@
      <string>Podesi vreme:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>140</y>
-      <width>161</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Trenutno vreme:</string>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="Unos">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>40</y>
+      <x>180</x>
+      <y>160</y>
       <width>121</width>
       <height>36</height>
      </rect>
@@ -69,11 +56,16 @@
    <widget class="QLineEdit" name="Ispis">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>140</y>
-      <width>121</width>
-      <height>36</height>
+      <x>220</x>
+      <y>30</y>
+      <width>211</width>
+      <height>91</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>36</pointsize>
+     </font>
     </property>
     <property name="text">
      <string/>
@@ -85,8 +77,8 @@
    <widget class="QCheckBox" name="InvertRow">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>260</y>
+      <x>200</x>
+      <y>290</y>
       <width>261</width>
       <height>34</height>
      </rect>
@@ -98,8 +90,8 @@
    <widget class="QGroupBox" name="FormatRadioGroup">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>300</y>
+      <x>200</x>
+      <y>330</y>
       <width>281</width>
       <height>131</height>
      </rect>
@@ -134,13 +126,52 @@
      </property>
     </widget>
    </widget>
+   <widget class="QLineEdit" name="UnosAlarm">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>160</y>
+      <width>121</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>  hh:mm:ss</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="TasterAlarm">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>210</y>
+      <width>121</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Potvrdi</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Alarm">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>160</y>
+      <width>141</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Podesi vreme:</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>437</width>
+     <width>656</width>
      <height>33</height>
     </rect>
    </property>

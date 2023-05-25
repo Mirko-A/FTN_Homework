@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTime>
 #include <QTimer>
 
 QT_BEGIN_NAMESPACE
@@ -34,8 +35,11 @@ private slots:
 
     void on_InvertRow_stateChanged(int arg1);
 
+    void on_TasterAlarm_clicked();
+
 private:
     Ui::MainWindow *ui;
-    QTimer* sec_ticker;
+    QTimer* sec_ticker = nullptr;
+    QTime*  m_AlarmTime = nullptr;
 };
 #endif // MAINWINDOW_H
