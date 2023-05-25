@@ -3,9 +3,12 @@
 #include <QTime>
 
 extern int rtc_i2c_fd;
+extern char a_clock[];
 extern void SetTime(int i2c_fd);
 extern void readTime(int i2c_fd);
-extern char a_clock[];
+
+extern int bcdToD(unsigned char byte);
+extern unsigned int dToBcd(unsigned int byte);
 
 const QString format = "hh:mm:ss";
 
@@ -29,13 +32,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_Taster_clicked()
 {
-
+    //QTime NewTime
+    //a_clock[]
 }
 
 void MainWindow::updateTime(void)
 {
     readTime(rtc_i2c_fd);
-    QTime time(a_clock[HOUR], a_clock[MNT], a_clock[SEC], 0);
+    QTime time(bcdToD(a_clock[HOUR]), bcdToD(a_clock[MNT]), bcdToD(a_clock[SEC]), 0);
     QString time_str = time.toString(format);
     ui->Ispis->setText(time_str);
 }
