@@ -36,6 +36,8 @@ void MainWindow::on_Taster_clicked()
     a_clock[HOUR] = dToBcd(NewTime.hour());
     a_clock[MNT] = dToBcd(NewTime.minute());
     a_clock[SEC] = dToBcd(NewTime.second());
+
+    SetTime(rtc_i2c_fd);
 }
 
 void MainWindow::updateTime(void)
