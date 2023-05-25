@@ -2,6 +2,11 @@
 #include "ui_mainwindow.h"
 #include <QTime>
 
+extern int rtc_i2c_fd;
+extern void SetTime(int i2c_fd);
+extern void readTime(int i2c_fd);
+extern char a_clock[];
+
 const QString format = "hh:mm:ss";
 
 MainWindow::MainWindow(QWidget *parent)

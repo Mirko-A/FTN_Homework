@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 	
-    setTime(rtc_i2c_fd);
+    InitializeClock(rtc_i2c_fd);
 	
 	// Start the clock
     wiringPiI2CWriteReg8(rtc_i2c_fd, 0, 0x00);

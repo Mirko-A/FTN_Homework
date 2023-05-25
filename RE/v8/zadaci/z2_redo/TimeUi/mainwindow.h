@@ -20,10 +20,6 @@ typedef enum
     SLOTS_LEN
 } TimeSlot;
 
-extern void setCustomTime(void);
-extern void readTime(void);
-extern char a_clock[];
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
