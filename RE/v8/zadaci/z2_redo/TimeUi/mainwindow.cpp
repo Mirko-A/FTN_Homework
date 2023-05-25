@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QTime>
+#include <QMessageBox>
 
 extern int rtc_i2c_fd;
 extern char a_clock[];
@@ -33,11 +34,18 @@ MainWindow::~MainWindow()
 void MainWindow::on_Taster_clicked()
 {
     QTime NewTime = QTime::fromString(ui->Unos->text());
-    a_clock[HOUR] = dToBcd(NewTime.hour());
-    a_clock[MNT] = dToBcd(NewTime.minute());
-    a_clock[SEC] = dToBcd(NewTime.second());
+    if (NewTime.isValid())
+    {
+        a_clock[HOUR] = dToBcd(NewTime.hour());
+        a_clock[MNT] = dToBcd(NewTime.minute());
+        a_clock[SEC] = dToBcd(NewTime.second());
 
-    SetTime(rtc_i2c_fd);
+        SetTime(rtc_i2c_fd);
+    }
+    else
+    {
+        QMessageBox::information(this, "Clock app", "Uneli ste pogresan format!");
+    }
 }
 
 void MainWindow::updateTime(void)
