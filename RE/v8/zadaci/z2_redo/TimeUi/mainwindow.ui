@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>437</width>
+    <height>530</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="Taster">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>240</y>
+      <x>200</x>
+      <y>90</y>
       <width>121</width>
       <height>36</height>
      </rect>
@@ -30,8 +30,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>190</y>
+      <x>30</x>
+      <y>40</y>
       <width>141</width>
       <height>28</height>
      </rect>
@@ -43,8 +43,8 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>290</y>
+      <x>30</x>
+      <y>140</y>
       <width>161</width>
       <height>28</height>
      </rect>
@@ -56,8 +56,8 @@
    <widget class="QLineEdit" name="Unos">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>190</y>
+      <x>200</x>
+      <y>40</y>
       <width>121</width>
       <height>36</height>
      </rect>
@@ -69,8 +69,8 @@
    <widget class="QLineEdit" name="Ispis">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>290</y>
+      <x>200</x>
+      <y>140</y>
       <width>121</width>
       <height>36</height>
      </rect>
@@ -82,13 +82,65 @@
      <string>  00:00:00</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="InvertRow">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>260</y>
+      <width>261</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Invertuj redove na LCD-u</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="FormatRadioGroup">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>300</y>
+      <width>281</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Format vremena na LCD-u:</string>
+    </property>
+    <widget class="QRadioButton" name="Format24">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>30</y>
+       <width>141</width>
+       <height>34</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>24-satni</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="Format12">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>60</y>
+       <width>141</width>
+       <height>34</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>12-satni</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>437</width>
      <height>33</height>
     </rect>
    </property>

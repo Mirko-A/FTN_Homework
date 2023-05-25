@@ -32,6 +32,8 @@ private slots:
     void on_Taster_clicked();
     void updateTime(void);
 
+    void on_InvertRow_stateChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     QTimer* sec_ticker;

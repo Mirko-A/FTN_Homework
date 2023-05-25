@@ -16,6 +16,8 @@ extern unsigned int dToBcd(unsigned int byte);
 
 const QString format = "hh:mm:ss";
 
+int y_pos = 0;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -58,13 +60,19 @@ void MainWindow::updateTime(void)
     QString time_str = time.toString(format);
     ui->Ispis->setText(time_str);
 
-//    int y = 0;
-//    if (ui->InvertRow)
-//    {
-//        y = (y == 0) ? 1 : 0;
-//    }
-
     lcdClear(lcd_h);
-    lcdPosition(lcd_h, 0, 0);
+    lcdPosition(lcd_h, 0, y_pos);
     lcdPrintf(lcd_h, time_str.toLocal8Bit().data());
+}
+
+void MainWindow::on_InvertRow_stateChanged(int arg1)
+{
+    if (arg1)
+    {
+        y_pos = 1;
+    }
+    else
+    {
+        y_pos = 0;
+    }
 }
