@@ -32,8 +32,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_Taster_clicked()
 {
-    //QTime NewTime
-    //a_clock[]
+    QTime NewTime = QTime::fromString(ui->Unos->text());
+    a_clock[HOUR] = dToBcd(NewTime.hour());
+    a_clock[MNT] = dToBcd(NewTime.minute());
+    a_clock[SEC] = dToBcd(NewTime.second());
 }
 
 void MainWindow::updateTime(void)
