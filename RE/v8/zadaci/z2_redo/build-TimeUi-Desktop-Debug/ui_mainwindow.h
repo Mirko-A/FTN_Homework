@@ -63,7 +63,7 @@ public:
         Unos->setGeometry(QRect(180, 160, 121, 36));
         Ispis = new QLineEdit(centralwidget);
         Ispis->setObjectName(QString::fromUtf8("Ispis"));
-        Ispis->setGeometry(QRect(200, 30, 241, 91));
+        Ispis->setGeometry(QRect(190, 30, 271, 91));
         QFont font;
         font.setPointSize(36);
         Ispis->setFont(font);

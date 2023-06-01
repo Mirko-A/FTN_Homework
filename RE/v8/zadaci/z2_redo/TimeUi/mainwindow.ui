@@ -56,9 +56,9 @@
    <widget class="QLineEdit" name="Ispis">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>190</x>
       <y>30</y>
-      <width>211</width>
+      <width>271</width>
       <height>91</height>
      </rect>
     </property>
