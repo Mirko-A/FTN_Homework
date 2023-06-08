@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 unsigned char WriteBuf;
-unsigned char ReadBuf0;
+unsigned char ReadBuf;
 unsigned char b[]={0x40,0x00};
 
 #define LOW_LIGHT 50u
