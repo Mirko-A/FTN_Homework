@@ -11,11 +11,10 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QDial>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
-#include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -24,8 +23,8 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
-    QSlider *LightSlide;
-    QDial *Dial;
+    QWidget *verticalLayoutWidget;
+    QVBoxLayout *verticalLayout;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -33,23 +32,19 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(800, 600);
+        MainWindow->resize(449, 510);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        LightSlide = new QSlider(centralwidget);
-        LightSlide->setObjectName(QString::fromUtf8("LightSlide"));
-        LightSlide->setEnabled(false);
-        LightSlide->setGeometry(QRect(550, 120, 16, 160));
-        LightSlide->setMaximum(255);
-        LightSlide->setOrientation(Qt::Vertical);
-        Dial = new QDial(centralwidget);
-        Dial->setObjectName(QString::fromUtf8("Dial"));
-        Dial->setEnabled(false);
-        Dial->setGeometry(QRect(260, 130, 141, 151));
+        verticalLayoutWidget = new QWidget(centralwidget);
+        verticalLayoutWidget->setObjectName(QString::fromUtf8("verticalLayoutWidget"));
+        verticalLayoutWidget->setGeometry(QRect(10, 10, 431, 361));
+        verticalLayout = new QVBoxLayout(verticalLayoutWidget);
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout->setContentsMargins(0, 0, 0, 0);
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 800, 33));
+        menubar->setGeometry(QRect(0, 0, 449, 33));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));

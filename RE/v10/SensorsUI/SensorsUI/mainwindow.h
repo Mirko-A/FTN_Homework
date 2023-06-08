@@ -4,8 +4,6 @@
 #include <QMainWindow>
 
 #include <QTimer>
-#include <QtCharts/QLineSeries>
-#include <QtCharts/QChartView>
 
 // adresa PCF8563 na I2C magistrali
 #define DEVICE_ID (0x48)
