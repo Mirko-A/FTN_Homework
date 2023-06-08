@@ -14,6 +14,8 @@ extern int i2c_fd;
 
 static unsigned int x_pos = 0;
 
+static bool measure = false;
+
 QtCharts::QChart* chart = nullptr;
 QtCharts::QLineSeries* series = nullptr;
 
@@ -30,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     chart->addSeries(series);
     chart->createDefaultAxes();
 
-    chart->axisX()->setRange(0, 5);
+    chart->axisX()->setRange(0, 6);
     chart->axisY()->setRange(0, 3.3);
 
     chart->setTitle("Merenje napona");
@@ -56,12 +58,28 @@ void MainWindow::UpdateChart()
     ReadBuf = wiringPiI2CReadReg8(i2c_fd, LIGHT_ADDR);
     double voltage = (double)ReadBuf * 3.3f / 255.0f;
 
-    series->append(x_pos, voltage);
-
-    x_pos += 1;
-    if(x_pos == 6)
+    if (measure)
     {
-        series->clear();
-        x_pos = 0;
+        if(x_pos == 6)
+        {
+            series->clear();
+            x_pos = 0;
+        }
+
+        series->append(x_pos, voltage);
+
+        x_pos += 1;
     }
+}
+
+void MainWindow::on_clearBtn_clicked()
+{
+    series->clear();
+    x_pos = 0;
+    measure = false;
+}
+
+void MainWindow::on_startBtn_clicked()
+{
+    measure = true;
 }

@@ -13,6 +13,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
@@ -25,6 +26,8 @@ public:
     QWidget *centralwidget;
     QWidget *verticalLayoutWidget;
     QVBoxLayout *verticalLayout;
+    QPushButton *clearBtn;
+    QPushButton *startBtn;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -32,19 +35,25 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(449, 510);
+        MainWindow->resize(586, 506);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         verticalLayoutWidget = new QWidget(centralwidget);
         verticalLayoutWidget->setObjectName(QString::fromUtf8("verticalLayoutWidget"));
-        verticalLayoutWidget->setGeometry(QRect(10, 10, 431, 361));
+        verticalLayoutWidget->setGeometry(QRect(10, 10, 571, 361));
         verticalLayout = new QVBoxLayout(verticalLayoutWidget);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
+        clearBtn = new QPushButton(centralwidget);
+        clearBtn->setObjectName(QString::fromUtf8("clearBtn"));
+        clearBtn->setGeometry(QRect(300, 380, 117, 36));
+        startBtn = new QPushButton(centralwidget);
+        startBtn->setObjectName(QString::fromUtf8("startBtn"));
+        startBtn->setGeometry(QRect(430, 380, 117, 36));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 449, 33));
+        menubar->setGeometry(QRect(0, 0, 586, 33));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -58,6 +67,8 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
+        clearBtn->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
+        startBtn->setText(QCoreApplication::translate("MainWindow", "Start", nullptr));
     } // retranslateUi
 
 };

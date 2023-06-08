@@ -27,6 +27,10 @@ public:
 private slots:
     void UpdateChart();
 
+    void on_clearBtn_clicked();
+
+    void on_startBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
     QTimer* sec_ticker;
